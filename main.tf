@@ -1,6 +1,9 @@
 resource "aws_key_pair" "key" {
   key_name   = "cloud_2021"
   public_key = file("~/.ssh/id_ed25519.pub")
+   lifecycle {  
+      ignore_changes = [ public_key ] 
+    }
 }
 resource "aws_vpc" "vpc" {
   cidr_block           = "172.16.0.0/16"
@@ -85,4 +88,89 @@ module "security-groups" {
   version = "1.0.0"
   vpc_id          = aws_vpc.vpc.id
   security_groups = var.security_groups
+}
+
+import {
+  to = aws_key_pair.key
+  id = "cloud_2021"
+}
+
+import {
+  to = aws_vpc.vpc
+  id = "vpc-042089aba3a7d05d8"
+}
+
+import {
+  to = aws_internet_gateway.igw
+  id = "igw-081f669496c8455e9"
+}
+
+import {
+  to = aws_subnet.subnet["pub_subnet1"]
+  id = "subnet-0297dbdeae50c2259"
+}
+
+import {
+  to = aws_subnet.subnet["pub_subnet2"]
+  id = "subnet-0d5cd5d7a993bf2f6"
+}
+
+import {
+  to = aws_subnet.subnet["pub_subnet3"]
+  id = "subnet-0f2c08c0bba49cfbd"
+}
+
+import {
+  to = aws_eip.eip["app"]
+  id = "eipalloc-0a67d44d2824c1add"
+}
+
+import {
+  to =  aws_eip.eip["dev"]
+  id = "eipalloc-0d29cd05472943d21"
+}
+
+import {
+  to =  aws_eip.eip["web"] 
+  id = "eipalloc-002d46fb7b1b79e10"
+}
+
+import {
+  to = aws_instance.server["app"] 
+  id = "i-03f5de3e005aee97d"
+}
+
+import {
+  to = aws_instance.server["dev"]
+  id = "i-02fa1958288dfb976"
+}
+
+import {
+  to = aws_instance.server["web"]
+  id = "i-09b77ff280be8476f"
+}
+
+import {
+  to = aws_route_table.rt
+  id = "rtb-08d01e57d14c73c8e"
+}
+
+import {
+  to = aws_route_table_association.rta["pub_subnet1"]
+  id = "subnet-0297dbdeae50c2259/rtb-08d01e57d14c73c8e"
+}
+
+import {
+  to = aws_route_table_association.rta["pub_subnet2"] 
+  id = "subnet-0d5cd5d7a993bf2f6/rtb-08d01e57d14c73c8e"
+}
+
+import {
+  to = aws_route_table_association.rta["pub_subnet3"]
+  id = "subnet-0f2c08c0bba49cfbd/rtb-08d01e57d14c73c8e"
+}
+
+import {
+  to = module.security-groups.aws_security_group.default["mini_project"] 
+  id = "sg-066285bbaec188ab1"
 }
